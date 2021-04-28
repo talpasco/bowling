@@ -1,0 +1,320 @@
+<!-- template.html -->
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<div class="container" id="app">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1>Youtube Comments Scraper</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 col-md-offset-3">
+            <form action="" class="search-form">
+                <div class="form-group has-feedback">
+                    <div class="search-group">
+                        <input type="text" class="form-control" name="search" id="search" placeholder="search"
+                            v-model="query">
+                        <span id="searchIcon" class="glyphicon glyphicon-search form-control-feedback"
+                            @click="search()"></span>
+                    </div>
+                    <br>
+                    <div class="search-group">
+                        <div>
+                            <label for="maxComments">Max Comments: </label>
+                            <input type="number" name="maxComments" id="maxComments" placeholder="maxComments" v-model="maxComments">
+                        </div>
+                        <div>
+                            <label style="margin-left: 3px;" for="updateReport">Update-Report: </label>
+                            <input type="checkbox" name="updateReport" id="updateReport" placeholder="updateReport"
+                                v-model="updateReport">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br><br>
+    <div id="resultView">
+        <ul v-for="result in results">
+            <li>
+                <tree-menu :nodes="result.children" :label="result.url + ' (' + result.title + ')'">
+                </tree-menu>
+            </li>
+        </ul>
+    </div>
+
+</div>
+<style>
+    body {
+        font-family: "Open Sans", sans-serif;
+        font-size: 18px;
+        font-weight: 300;
+        line-height: 1em;
+    }
+
+    .container {
+        margin: 0 auto;
+    }
+
+    .label-wrapper {
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .has-children {
+        cursor: pointer;
+    }
+
+    .search-form .form-group {
+        width: 40vw !important;
+        border-radius: 4px 25px 25px 4px;
+        height: 32px;
+        background-color: #fff;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+        border: 1px solid #ccc;
+    }
+
+    .search-form .form-group input.form-control {
+        padding-right: 20px;
+        border: 0 none;
+        background: transparent;
+        box-shadow: none;
+        display: block;
+    }
+
+    .search-form .form-group span.form-control-feedback {
+        width: 34px;
+        height: 34px;
+        line-height: 34px;
+        text-align: center;
+        color: #3596e0;
+        font-size: 14px;
+        position: relative !important;
+        display: inline-block !important;
+        pointer-events: all !important;
+        cursor: pointer !important;
+    }
+
+    .resHeader {
+        color: red;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .search-group {
+        display: flex;
+        align-items: center;
+    }
+
+    #resultView {
+        margin-top: 2em;
+        width: 100%;
+    }
+
+    .glyphicon.fast-right-spinner {
+        -webkit-animation: glyphicon-spin-r 1s infinite linear;
+        animation: glyphicon-spin-r 1s infinite linear;
+    }
+
+    /* Watch next sidebar */
+#related.ytd-watch { display: none; }
+
+/* Comments */
+/* ytd-comments { display: none; } */
+
+/* Watch next panel over the that has just finished */
+.ytp-endscreen-content { display: none; }
+
+/* Suggesting videos whilst the current one is starting */
+.ytp-cards-teaser { display: none; }
+
+/* Suggesting videos whilst current video is playing */
+.ytp-ce-element-show.ytp-ce-bottom-left-quad { display: none; }
+
+
+
+
+#ticket-shelf { display: none; }
+
+.ytd-shelf-renderer { display: none } 
+
+button{
+    width: 40px!important;
+    height: 40px!important;
+    float: left!important;
+}
+
+/* YouTube Red */
+ytd-guide-section-renderer:nth-of-type(4) { display: none; }
+
+/* Trending */
+ytd-guide-entry-renderer:nth-of-type(2) { display: none; }
+
+
+
+    @-webkit-keyframes glyphicon-spin-r {
+        0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+
+        100% {
+            -webkit-transform: rotate(359deg);
+            transform: rotate(359deg);
+        }
+    }
+
+    @keyframes glyphicon-spin-r {
+        0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+
+        100% {
+            -webkit-transform: rotate(359deg);
+            transform: rotate(359deg);
+        }
+    }
+</style>
+<script>
+    Vue.component('tree-menu', {
+        template: '#tree-menu',
+        props: ['nodes', 'label'],
+        data() {
+            return {
+                showChildren: true
+            }
+        },
+        computed: {
+            iconClasses() {
+                return {
+                    'fa-plus-square-o': !this.showChildren,
+                    'fa-minus-square-o': this.showChildren
+                }
+            },
+            labelClasses() {
+                return { 'has-children': this.nodes }
+            },
+            indent() {
+                return { transform: `translate(${this.depth * 50}px)` }
+            }
+        },
+        methods: {
+            toggleChildren() {
+                //this.showChildren = !this.showChildren;
+            }
+        }
+    });
+
+    let app = new Vue({
+        el: '#app',
+        // declare the data for the component (An array that houses the results and a query that holds the current search string)
+        data: {
+            results: [],
+            query: '',
+            maxComments: 50,
+            updateReport: true,
+            connected: false
+        },
+        // declare methods in this Vue component. here only one method which performs the search is defined
+        methods: {
+            // make an axios request to the server with the current search query
+            search: function () {
+                document.getElementById("searchIcon").className = "glyphicon glyphicon-repeat fast-right-spinner";
+                let vm = this;
+                if (!this.updateReport) {
+                    this.results = [];
+                    axios.get('http://localhost:3001/api/crawl_histories/' + encodeURIComponent(this.query)).then(resp => {
+                        document.getElementById('resultView').innerHTML = resp.data;
+                        document.getElementById("searchIcon").className = "glyphicon glyphicon-search form-control-feedback";
+                    }).catch(error => {
+                        document.getElementById('resultView').innerHTML = `<div class='resHeader'> ------------- No results, please check 'Update-Query' checkbox -------------</div>`;
+                        document.getElementById("searchIcon").className = "glyphicon glyphicon-search form-control-feedback";
+                    })
+                }
+                else {
+                    if (!this.connected) {
+                        this.socketSubscribe();
+                        setTimeout(function () {
+                            vm.search();
+                        }, 3000);
+                    }
+                    else {
+                        this.results = [];
+                        let qObj = {
+                            query: this.query,
+                            maxComments: this.maxComments
+                        }
+                        this.sendMessage(JSON.stringify(qObj));
+                    }
+                }
+            },
+            sendMessage: function (message) {
+                this.connection.send(message);
+            },
+            socketSubscribe: function () {
+                let vm = this;
+                console.log("Starting connection to WebSocket Server")
+                this.connection = new WebSocket(`ws://127.0.0.1:3001?uid=${window.location.host}`)
+
+                this.connection.onmessage = function (event) {
+                    let res = {};
+                    try {
+                        res = JSON.parse(event.data);
+                    } catch (e) { }
+                    if (res && res.crawl_res) {
+                        document.getElementById("searchIcon").className = "glyphicon glyphicon-search form-control-feedback";
+                    }
+                    else {
+                        document.getElementById('resultView').innerHTML = event.data;
+                    }
+                }
+
+                this.connection.onopen = function (event) {
+                    console.log(event);
+                    console.log("Successfully connected to the echo websocket server...");
+                    vm.connected = true;
+                }
+
+                this.connection.onclose = function (event) {
+                    console.log(event);
+                    console.log("Disconnected from websocket server...");
+                    vm.connected = false;
+                }
+            }
+        },
+        created: function () {
+            this.socketSubscribe();
+        },
+        mounted: function () {
+            window.addEventListener('keyup', function (event) {
+                if (event.keyCode === 13) {
+                    app.search();
+                }
+            });
+        }
+    })
+</script>
+
+<script type="text/x-template" id="tree-menu">
+    <div class="tree-menu">
+      <div class="label-wrapper" @click="toggleChildren">
+        <div :style="indent" :class="labelClasses">
+          <i v-if="nodes" class="fa" :class="iconClasses"></i>
+          {{ label }}
+        </div>
+      </div>
+      <tree-menu 
+        v-if="showChildren"
+        v-for="node in nodes" 
+        :nodes="node.nodes" 
+        :label="node.url"
+        :depth="depth + 1"   
+      >
+      </tree-menu>
+    </div>
+  </script>

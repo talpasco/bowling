@@ -1,0 +1,39 @@
+{
+    "name": "roll",
+    "base": "PersistedModel",
+    "idInjection": true,
+    "options": {
+        "validateUpsert": true
+    },
+    "properties": {
+        "gameId": {
+            "type": "string"
+        },
+        "frameId": {
+            "type": "string"
+        },
+        "playerId": {
+            "type": "string"
+        },
+        "knockedPins": {
+            "type": "number",
+            "dataType": "int"
+        },
+        "user": {
+            "type": "number",
+            "dataType": "int"
+        },
+        "time": {
+            "type": "date"
+        }
+    },
+    "relations": {
+        "users": {
+            "type": "hasOne",
+            "model": "user",
+            "foreignKey": "id"
+        }
+    },
+    "validations": [],
+    "methods": {}
+}

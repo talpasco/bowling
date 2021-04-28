@@ -1,0 +1,34 @@
+{
+    "name": "game",
+    "base": "PersistedModel",
+    "idInjection": true,
+    "options": {
+        "validateUpsert": true
+    },
+    "properties": {
+        "players": {
+            "type": "array"
+        },
+        "frames": {
+            "type": "array"
+        },
+        "currentFrame": {
+            "type": "number",
+            "dataType": "int"
+        },
+        "startingPlayer": {
+            "type": "string"
+        },
+        "currentPlayer": {
+            "type": "string"
+        },
+        "status": {
+            "type": "string"
+        },
+        "winner": {
+            "type": "string"
+        }
+    },
+    "validations": [],
+    "methods": {}
+}

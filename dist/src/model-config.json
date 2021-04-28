@@ -1,0 +1,55 @@
+{
+  "_meta": {
+    "sources": [
+      "loopback/common/models",
+      "loopback/server/models",
+      "./common/models",
+      "./models"
+    ],
+    "mixins": [
+      "loopback/common/mixins",
+      "loopback/server/mixins",
+      "./common/mixins",
+      "./mixins"
+    ]
+  },
+  "User": {
+    "dataSource": "bowling_db",
+    "public": false
+  },
+  "AccessToken": {
+    "dataSource": "bowling_db",
+    "public": false
+  },
+  "ACL": {
+    "dataSource": "bowling_db",
+    "public": false
+  },
+  "RoleMapping": {
+    "dataSource": "bowling_db",
+    "public": false
+  },
+  "Role": {
+    "dataSource": "bowling_db",
+    "public": false
+  },
+  "game": {
+    "dataSource": "bowling_db",
+    "public": true
+  },
+  "roll": {
+    "dataSource": "bowling_db",
+    "public": true
+  },
+  "frame": {
+    "dataSource": "bowling_db",
+    "public": true
+  },
+  "user": {
+    "dataSource": "bowling_db",
+    "public": true,
+    "options": {
+      "emailVerificationRequired": false
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+    "name": "frame",
+    "base": "PersistedModel",
+    "idInjection": true,
+    "options": {
+        "validateUpsert": true
+    },
+    "properties": {
+        "gameId": {
+            "type": "string"
+        },
+        "rolls": {
+            "type": "array"
+        },
+        "result": {
+            "type": "number",
+            "dataType": "int"
+        },
+        "status": {
+            "type": "string"
+        },
+        "playerId": {
+            "type": "string"
+        }
+    },
+    "validations": [],
+    "methods": {}
+}

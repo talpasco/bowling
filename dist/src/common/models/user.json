@@ -1,0 +1,29 @@
+{
+    "name": "user",
+    "base": "User",
+    "idInjection": true,
+    "options": {
+        "injectOptionsFromRemoteContext": true,
+        "validateUpsert": true
+    },
+    "properties": {},
+    "validations": [],
+    "relations": {
+        "roles": {
+            "type": "hasMany",
+            "model": "Role",
+            "foreignKey": "principalId",
+            "through": "RoleMapping"
+        }
+    },
+    "acls": [
+        {
+            "property": "*",
+            "accessType": "*",
+            "principalType": "ROLE",
+            "principalId": "$everyone",
+            "permission": "ALLOW"
+        }
+    ],
+    "methods": {}
+}
