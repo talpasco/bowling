@@ -54,7 +54,6 @@ let sessionObj = session({
 });
 app.middleware("session", sessionObj);
 app.use(sessionObj);
-const { crawlComments } = require("./crawler.js");
 // defined the base route and return with an HTML file called tempate.html
 app.get("/", function (req, res) {
     res.sendFile("template.html", {
@@ -82,7 +81,6 @@ webServer.on("connection", function (socket, req) {
     console.log({ userID: userID, msg: "Got webServer Connection" });
     socket.on("message", function (message) {
         let msg = JSON.parse(message);
-        crawlComments(socket, msg.query, msg.maxComments);
     });
     socket.on("error", function (error) {
         console.error({ userID: userID, error: error });

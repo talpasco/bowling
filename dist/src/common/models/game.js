@@ -17,14 +17,5 @@ module.exports = function (game) {
             ctx.instance.id = shortid_1.default.generate();
         }
     });
-    game.refreshReport = function (cb) {
-        cb(null, null);
-    };
-    game.remoteMethod("refreshReport", {
-        http: { verb: "post" },
-        description: "refresh the report, and save within the DB",
-        accepts: [],
-        returns: { arg: "data", type: ["game"], root: true },
-    });
 };
 //# sourceMappingURL=game.js.map

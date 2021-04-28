@@ -6,7 +6,7 @@
 <div class="container" id="app">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-            <h1>Youtube Comments Scraper</h1>
+            <h1>Bowling Game</h1>
         </div>
     </div>
     <div class="row">
@@ -16,14 +16,14 @@
                     <div class="search-group">
                         <input type="text" class="form-control" name="search" id="search" placeholder="search"
                             v-model="query">
-                        <span id="searchIcon" class="glyphicon glyphicon-search form-control-feedback"
-                            @click="search()"></span>
+                        <span id="searchIcon" class="glyphicon glyphicon-play form-control-feedback"
+                            @click="bowl()"></span>
                     </div>
                     <br>
                     <div class="search-group">
                         <div>
-                            <label for="maxComments">Max Comments: </label>
-                            <input type="number" name="maxComments" id="maxComments" placeholder="maxComments" v-model="maxComments">
+                            <label for="score">Score: </label>
+                            <input type="number" name="score" id="score" placeholder="score" v-model="score">
                         </div>
                         <div>
                             <label style="margin-left: 3px;" for="updateReport">Update-Report: </label>
@@ -120,23 +120,6 @@
         animation: glyphicon-spin-r 1s infinite linear;
     }
 
-    /* Watch next sidebar */
-#related.ytd-watch { display: none; }
-
-/* Comments */
-/* ytd-comments { display: none; } */
-
-/* Watch next panel over the that has just finished */
-.ytp-endscreen-content { display: none; }
-
-/* Suggesting videos whilst the current one is starting */
-.ytp-cards-teaser { display: none; }
-
-/* Suggesting videos whilst current video is playing */
-.ytp-ce-element-show.ytp-ce-bottom-left-quad { display: none; }
-
-
-
 
 #ticket-shelf { display: none; }
 
@@ -147,14 +130,6 @@ button{
     height: 40px!important;
     float: left!important;
 }
-
-/* YouTube Red */
-ytd-guide-section-renderer:nth-of-type(4) { display: none; }
-
-/* Trending */
-ytd-guide-entry-renderer:nth-of-type(2) { display: none; }
-
-
 
     @-webkit-keyframes glyphicon-spin-r {
         0% {
@@ -216,38 +191,38 @@ ytd-guide-entry-renderer:nth-of-type(2) { display: none; }
         data: {
             results: [],
             query: '',
-            maxComments: 50,
+            score: 50,
             updateReport: true,
             connected: false
         },
         // declare methods in this Vue component. here only one method which performs the search is defined
         methods: {
             // make an axios request to the server with the current search query
-            search: function () {
+            bowl: function () {
                 document.getElementById("searchIcon").className = "glyphicon glyphicon-repeat fast-right-spinner";
                 let vm = this;
                 if (!this.updateReport) {
                     this.results = [];
-                    axios.get('http://localhost:3001/api/crawl_histories/' + encodeURIComponent(this.query)).then(resp => {
+                    axios.get('http://localhost:3001/api/find' + encodeURIComponent(this.query)).then(resp => {
                         document.getElementById('resultView').innerHTML = resp.data;
-                        document.getElementById("searchIcon").className = "glyphicon glyphicon-search form-control-feedback";
+                        document.getElementById("searchIcon").className = "glyphicon glyphicon-play form-control-feedback";
                     }).catch(error => {
                         document.getElementById('resultView').innerHTML = `<div class='resHeader'> ------------- No results, please check 'Update-Query' checkbox -------------</div>`;
-                        document.getElementById("searchIcon").className = "glyphicon glyphicon-search form-control-feedback";
+                        document.getElementById("searchIcon").className = "glyphicon glyphicon-play form-control-feedback";
                     })
                 }
                 else {
                     if (!this.connected) {
                         this.socketSubscribe();
                         setTimeout(function () {
-                            vm.search();
+                            vm.bowl();
                         }, 3000);
                     }
                     else {
                         this.results = [];
                         let qObj = {
                             query: this.query,
-                            maxComments: this.maxComments
+                            score: this.score
                         }
                         this.sendMessage(JSON.stringify(qObj));
                     }
@@ -266,8 +241,8 @@ ytd-guide-entry-renderer:nth-of-type(2) { display: none; }
                     try {
                         res = JSON.parse(event.data);
                     } catch (e) { }
-                    if (res && res.crawl_res) {
-                        document.getElementById("searchIcon").className = "glyphicon glyphicon-search form-control-feedback";
+                    if (res && res.bowl_res) {
+                        document.getElementById("searchIcon").className = "glyphicon glyphicon-play form-control-feedback";
                     }
                     else {
                         document.getElementById('resultView').innerHTML = event.data;
@@ -293,7 +268,7 @@ ytd-guide-entry-renderer:nth-of-type(2) { display: none; }
         mounted: function () {
             window.addEventListener('keyup', function (event) {
                 if (event.keyCode === 13) {
-                    app.search();
+                    app.bowl();
                 }
             });
         }
