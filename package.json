@@ -42,6 +42,7 @@
     "loopback-connector-mongodb": "^6.0.0",
     "loopback-context": "^3.5.2",
     "make-dir": "^3.1.0",
+    "path": "^0.12.7",
     "prettier": "^2.0.5",
     "redis": "^3.0.2",
     "rimraf": "^3.0.2",

@@ -1,5 +1,2 @@
 "use strict";
-module.exports = function (frame) {
-
-
-};
+module.exports = function (frame) {};
